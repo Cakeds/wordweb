@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 
 
 app=Flask(__name__)
@@ -11,7 +11,7 @@ words=[
     {'id':4, 'english':'MethionylglutaminylarginytyrosylglutamylserylleucylphenylalanylalanylglutaminylleucyllysylglutamylarginyllysylglutamylglycylalanylphenylalanyvalylprolylphenylalanylvalythreonylleucylglycylaspartylprolyglycylisoleucylglutamylglutaminylserylleucyllysylisoleucylaspartylthreonylleucylisoleucylglutamylalanylglycylalanylaspartylalanylleucylglutamylleucylglycylglycylisoleucylprolylphenylalanylserylspartylprolylleucelalanylaspartyglycylprolythreonylisoleucylglutamiylasparaginylalanylthreonylleucylarginylalanylphenylalanylalanylglycylvalyltheonylprolylalanylglutaminylcysteinylphenylalanygllutamylmethionylleucyalanylleucylisoleucylarginylglutaminyllysylhistidylprolylthreonylisoleucylpriIylisoleucylglycylleucylleucylmethionyltyrosylalanylasparaginylleucylvalyphenylalanycyoleucylaspartylglutamylphenylalanyltysylalanylgutaminyllcysteinylglutamyllysylvalylglycylavlylaspartylserylvalylleucylvalylalanylaspartylvalyprolylvalylglutaminylglutamyllserylalanyprolyphenylalanylarginylglutaminylalanylalanylleucylargihistidylasparaginylvaylalanylprolylisoleucylphenylalanylisoleucylcysteinylprolylprolylaspartylalanylaspartylaspartylaspartylleucylleucylarginyglutaminylisoleucylalanyylseryltyrosylglycylarginylglycyltyrosylthreonyltyrsylleucylleucylserylarginylalanylglycylvalythreonylglycylalanylglutamylasparaginylarginylanylalanylleucylprolylleucylaspaaginylhistidylleucylvaylalanyllysylleucyllysylglutamyltyrosylasaraginylglycylphenylalanylglycylisoleucylalanylprolylaspartylglutaminylvalyllysylalanylalanylisoleucylaspartylalanylalanyglycylalanylalanyglycylalanylisoleucylserylglycyserylalanylisoleucylbalyllsylisoleucylisoleucylglutamyyylglutaminylhistidylasparaginylisoleucylglutamylprolyglutamyllysylmethionylleucylalanylalanylleucyllysylvalylphenylalabylvalylglutaminlylprolylmethionyllysylalanylalanylthreonylarginylserine', 'korea':'트리토판'},
     {'id':5, 'english':'Apple', 'korea':'핸드폰'}
 ]
-
+nextid=len(words)+1
 
 @app.route('/')
 def index():
@@ -32,5 +32,33 @@ def read(id):
             break
 
     return render_template('word.html', id=id, english=english, korea=korea)
+
+@app.route('/new/')
+def create():
+    return render_template('create.html', word_list=words)
+
+@app.route('/create/', methods=['POST'])
+def post_create():
+    global nextid
+    english = request.form['english']
+    korea = request.form['korea']
+    newword = {'id': nextid, 'english': english, 'korea': korea}
+    words.append(newword)
+    nextid += 1
+    return redirect('/word/{}/'.format(newword['id'])) 
+
+
+
+@app.route('/modify/<int:id>/')
+def update():
+    english=""
+    korea=""
+    for word in words:
+        if id == word["id"]:
+            english = word['english']
+            korea = word['korea']
+            break
+    return render_template('update.html', id=id, english=english, korea=korea)
+
 
 app.run(debug=True)
