@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>{{word['english']}}</h2>
+    <ul>
+    {% for korea in koreas %}
+    <li>{{korea}}</li>
+    {% endfor %}
+    </ul>
+    <details>
+        <summary>정답</summary>
+        <p>{{word['english']}}, {{word['korea']}}</p>
+    </details>
+    <a href="/random/">next</a>
+{% endblock %}

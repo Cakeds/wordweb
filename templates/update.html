@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action='/create/{{id}}'method="POST">
+<form action='/update/{{id}}'method="POST">
     <input type='text' name='english'value='{{english}}'>
     <input type='text' name='korea'value='{{korea}}'>
     <input type='submit' value='수정'>
