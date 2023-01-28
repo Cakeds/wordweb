@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect
-
+import random
 
 app=Flask(__name__)
 
@@ -50,7 +50,7 @@ def post_create():
 
 
 @app.route('/modify/<int:id>/')
-def update():
+def update(id):
     english=""
     korea=""
     for word in words:
@@ -60,5 +60,32 @@ def update():
             break
     return render_template('update.html', id=id, english=english, korea=korea)
 
+@app.route('/update/<int:id>/', methods=['POST'])
+def post_update(id):
+    for word in words:
+        if id == word['id']:
+            word['english'] = request.form['english']
+            word['korea'] = request.form['korea']
+            break
+    return redirect(f'/word/{id}/')
 
+@app.route('/remove/<int:id>/', methods=['POST'])
+def delete(id):
+    for word in words:
+        if id == word['id']:
+            words.remove(word)
+    
+
+    return redirect('/list/')
+
+@app.route('/random/')
+def randomWord():
+    sample = random.sample(words, 4)
+    answer=sample[0]
+    random.shuffle(sample)
+    koreas = []
+    for word in sample:
+        koreas.append(word['korea'])
+
+    return render_template('random.html', word=answer, koreas=koreas)
 app.run(debug=True)
